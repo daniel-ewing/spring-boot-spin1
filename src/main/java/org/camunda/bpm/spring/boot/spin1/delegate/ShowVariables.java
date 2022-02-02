@@ -56,6 +56,12 @@ public class ShowVariables implements JavaDelegate {
             }
         }
 
+        ObjectValue mapWithNullValueObject = delegateExecution.getVariableTyped("mapWithNullValueJava");
+        processMapWithNullValueObject(mapWithNullValueObject, processKey, "Java");
+
+        mapWithNullValueObject = delegateExecution.getVariableTyped("mapWithNullValueJson");
+        processMapWithNullValueObject(mapWithNullValueObject, processKey, "Json");
+
         LOGGER.info("-----> execute: Exit {}", processKey);
     }
 
@@ -68,6 +74,16 @@ public class ShowVariables implements JavaDelegate {
                         processKey, type, customer.getAccount(), customer.getFirstName(), customer.getLastName());
                 // Do something with Customer.
             }
+        }
+    }
+
+    private void processMapWithNullValueObject(ObjectValue mapWithNullValueObject, String processKey, String type) {
+        Map<String, String> mapWithNullValue = (HashMap<String, String>) mapWithNullValueObject.getValue();
+        Iterator<Map.Entry<String, String>> mapIterator = mapWithNullValue.entrySet().iterator();
+        for (Map.Entry<String, String> stringEntry : mapWithNullValue.entrySet()) {
+            LOGGER.info("-----> {}: Deserialized {}: {} = {}",
+                    processKey, type, stringEntry.getKey(), stringEntry.getValue());
+            // Do something with String.
         }
     }
 }

@@ -55,6 +55,28 @@ public class SetVariables implements JavaDelegate {
 
         delegateExecution.setVariable("accountCustomersGsonToJson", new Gson().toJson(accountCustomers));
 
+        Map<String, String> mapWithNullValue = new HashMap<String, String>();
+
+        // The behavior seems a bit unpredictable as to which Map entry will be used to determine the type.
+        // Sometimes you get a NPE and sometimes you don't.
+
+        // This usually generates a NPE (a map with only two entries):
+        mapWithNullValue.put("key0", "value0");
+        mapWithNullValue.put("key1", null);
+
+        // This usually works (another map, again with only two entries):
+//        mapWithNullValue.put("key1", "value1");
+//        mapWithNullValue.put("key2", null);
+
+        // This always generates a NPE (a map with only one entry):
+//        mapWithNullValue.put("key1", null);
+
+        typedObjectVariableJava = Variables.objectValue(mapWithNullValue).serializationDataFormat(Variables.SerializationDataFormats.JAVA).create();
+        delegateExecution.setVariable("mapWithNullValueJava", typedObjectVariableJava);
+
+        typedObjectVariableJson = Variables.objectValue(mapWithNullValue).serializationDataFormat(Variables.SerializationDataFormats.JSON).create();
+        delegateExecution.setVariable("mapWithNullValueJson", typedObjectVariableJson);
+
         LOGGER.info("-----> execute: Exit {}", processKey);
     }
 }
