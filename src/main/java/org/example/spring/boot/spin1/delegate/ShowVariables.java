@@ -28,46 +28,12 @@ public class ShowVariables implements JavaDelegate {
 
         LOGGER.info("-----> execute: Enter {}", processKey);
 
-        SpinJsonNode taskNumbers = (SpinJsonNode) delegateExecution.getVariable("taskNumbers");
-        LOGGER.info("-----> {}: taskNumbers = {}", processKey, taskNumbers.toString());
+        ObjectValue apiResponseObject = delegateExecution.getVariableTyped("apiResponse");
+        String apiResponse = apiResponseObject.getValue().toString();
 
-        ObjectValue accountCustomersObject = delegateExecution.getVariableTyped("accountCustomersJava");
-        processAccountCustomersObject(accountCustomersObject, processKey, "Java");
-
-        accountCustomersObject = delegateExecution.getVariableTyped("accountCustomersJson");
-        processAccountCustomersObject(accountCustomersObject, processKey, "Json");
-
-        try {
-            accountCustomersObject = delegateExecution.getVariableTyped("accountCustomersGsonToJson");
-            processAccountCustomersObject(accountCustomersObject, processKey, "GsonToJson");
-        }
-        catch (ClassCastException e) {
-            if (e.getMessage().contains("PrimitiveTypeValueImpl$StringValueImpl cannot be cast to class")) {
-                String accountCustomersString = delegateExecution.getVariable("accountCustomersGsonToJson").toString();
-                TypeReference<HashMap<String, List<Customer>>> typeReference = new TypeReference<HashMap<String, List<Customer>>>() {};
-                Map<String, List<Customer>> accountCustomers = new ObjectMapper().readValue(accountCustomersString, typeReference);
-                for (Map.Entry<String, List<Customer>> arrayEntry : accountCustomers.entrySet()) {
-                    for (Customer customer : arrayEntry.getValue()) {
-                        LOGGER.info("-----> {}: Deserialized {}: Account Name = {} - Customer Name = {} {}",
-                                processKey, "GsonToJson String", customer.getAccount(), customer.getFirstName(), customer.getLastName());
-                        // Do something with Customer.
-                    }
-                }
-            }
-        }
+        LOGGER.info("-----> {}: apiResponse =\n{}", processKey, apiResponse);
 
         LOGGER.info("-----> execute: Exit {}", processKey);
     }
 
-    private void processAccountCustomersObject(ObjectValue accountCustomersObject, String processKey, String type) {
-        Map<String, List<Customer>> accountCustomers = (HashMap<String, List<Customer>>) accountCustomersObject.getValue();
-        Iterator<Map.Entry<String, List<Customer>>> mapIterator = accountCustomers.entrySet().iterator();
-        for (Map.Entry<String, List<Customer>> arrayEntry : accountCustomers.entrySet()) {
-            for (Customer customer : arrayEntry.getValue()) {
-                LOGGER.info("-----> {}: Deserialized {}: Account Name = {} - Customer Name = {} {}",
-                        processKey, type, customer.getAccount(), customer.getFirstName(), customer.getLastName());
-                // Do something with Customer.
-            }
-        }
-    }
 }
