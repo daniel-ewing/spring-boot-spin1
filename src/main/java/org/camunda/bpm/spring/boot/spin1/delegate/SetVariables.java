@@ -1,12 +1,12 @@
 package org.camunda.bpm.spring.boot.spin1.delegate;
 
 import camundajar.impl.com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.camunda.bpm.engine.variable.Variables;
 import org.camunda.bpm.engine.variable.value.ObjectValue;
-import org.camunda.bpm.spring.boot.spin1.model.Customer;
 import org.camunda.spin.Spin;
 import org.camunda.spin.json.SpinJsonNode;
 import org.slf4j.Logger;
@@ -20,41 +20,24 @@ import java.util.List;
 import java.util.Map;
 
 @Component
+@Slf4j
 public class SetVariables implements JavaDelegate {
-    private final static Logger LOGGER = LoggerFactory.getLogger(SetVariables.class);
-
-    @Autowired
-    private RepositoryService repositoryService;
 
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
-        String processKey = repositoryService.getProcessDefinition(delegateExecution.getProcessDefinitionId()).getKey();
+        if (log.isDebugEnabled()) log.debug("-----> execute: Enter - {}", delegateExecution.getCurrentActivityId());
 
-        LOGGER.info("-----> execute: Enter {}", processKey);
+        List<String> list = new ArrayList<>();
+        list.add("Grundregelset");
+        list.add("Behoerdenregelset");
+        list.add("Beschlussregelset");
+        list.add("Ursprungsbeschlussregelset");
+        list.add("Berichtsregelset");
 
-        String taskNumbers = "{ \"taskNumber\" : [ \"A\", \"B\", \"C\" ] }";
-        SpinJsonNode spinJson = Spin.JSON(taskNumbers);
-        SpinJsonNode spinList = spinJson.prop("taskNumber");
-        delegateExecution.setVariable("taskNumbers", spinList);
+        ObjectValue typedObjectVariableJava = Variables.objectValue(list).serializationDataFormat(Variables.SerializationDataFormats.JAVA).create();
+        delegateExecution.setVariable("deserializedList", list);
+        delegateExecution.setVariable("serializedList", typedObjectVariableJava);
 
-        Map<String, List<Customer>> accountCustomers = new HashMap<String, List<Customer>>();
-        List<Customer> customersOfAccount1 = new ArrayList<Customer>();
-        customersOfAccount1.add(new Customer("Account1", "First1", "Last1"));
-        customersOfAccount1.add(new Customer("Account1", "First2", "Last2"));
-        List<Customer> customersOfAccount2 = new ArrayList<Customer>();
-        customersOfAccount2.add(new Customer("Account2", "First3", "Last3"));
-        customersOfAccount2.add(new Customer("Account2", "First4", "Last4"));
-        accountCustomers.put("Account1", customersOfAccount1);
-        accountCustomers.put("Account2", customersOfAccount2);
-
-        ObjectValue typedObjectVariableJava = Variables.objectValue(accountCustomers).serializationDataFormat(Variables.SerializationDataFormats.JAVA).create();
-        delegateExecution.setVariable("accountCustomersJava", typedObjectVariableJava);
-
-        ObjectValue typedObjectVariableJson = Variables.objectValue(accountCustomers).serializationDataFormat(Variables.SerializationDataFormats.JSON).create();
-        delegateExecution.setVariable("accountCustomersJson", typedObjectVariableJson);
-
-        delegateExecution.setVariable("accountCustomersGsonToJson", new Gson().toJson(accountCustomers));
-
-        LOGGER.info("-----> execute: Exit {}", processKey);
+        if (log.isDebugEnabled()) log.debug("-----> execute: Exit - {}", delegateExecution.getCurrentActivityId());
     }
 }

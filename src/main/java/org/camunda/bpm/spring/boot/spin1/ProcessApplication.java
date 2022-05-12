@@ -24,10 +24,8 @@ public class ProcessApplication {
 		LOGGER.info("-----> processPostDeploy: Enter");
 
 		for (int pi = 1; pi <= 1; pi++) {
-			ProcessInstance processInstance1 = runtimeService.startProcessInstanceByKey("spin-synchronous", "Spin BK " + pi);
-			ProcessInstance processInstance2 = runtimeService.startProcessInstanceByKey("spin-asynchronous", "Spin BK " + pi);
-			LOGGER.info("-----> processPostDeploy: created synchronous process instance with ID: {}", processInstance1.getId());
-			LOGGER.info("-----> processPostDeploy: created asynchronous process instance with ID: {}", processInstance2.getId());
+			ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("spin-asynchronous", "Spin BK " + pi);
+			LOGGER.info("-----> processPostDeploy: created asynchronous process instance with ID: {}", processInstance.getId());
 
 			if ((pi % 1000) == 0) {
 				LOGGER.info("-----> processPostDeploy created: {} process instances", pi);

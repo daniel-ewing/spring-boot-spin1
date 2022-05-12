@@ -11,6 +11,7 @@ camunda:
       create: All tasks
     generic-properties:
       properties:
+        javaSerializationFormatEnabled: true
         # History Cleanup
 #        historyCleanupStrategy: removalTimeBased
 #        historyRemovalTimeStrategy: end
@@ -41,3 +42,28 @@ spring:
     url: jdbc:h2:mem:camunda-db
     username: sa
     password: sa
+
+# Logging Settings
+logging:
+  file:
+    path: ./logs           # specify a path to write to file, otherwise it defaults to the console.
+  level:
+    # Camunda Loggers
+    org.camunda: INFO     # WARNING!! THIS NAMESPACE WILL OUTPUT ALL CAMUNDA LOGS AT THE SPECIFIED LEVEL.
+    org.camunda.bpm.spring.boot.spin1: DEBUG
+#    org.camunda.bpm.engine.cmd: DEBUG
+#    org.camunda.bpm.engine.impl.persistence.entity: DEBUG
+#    org.camunda.bpm.engine.impl.batch.BatchEntity: DEBUG
+#    org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity: DEBUG
+#    org.camunda.bpm.engine.impl.persistence.entity.IncidentEntity: DEBUG
+#    org.camunda.bpm.engine.impl.persistence.entity.JobEntity: DEBUG
+#    org.camunda.bpm.engine.impl.persistence.entity.VariableInstanceEntity: DEBUG
+#    org.camunda.bpm.engine.jobexecutor: DEBUG
+#    org.camunda.bpm.engine.persistence: DEBUG
+#    org.camunda.bpm.engine.tx: DEBUG
+#    # Common Camunda Dependencies
+#    org.apache.ibatis: INFO
+#    # Add Catalina logging
+#    org.apache.catalina: INFO
+#    # Add Tomcat logging
+#    org.apache.tomcat: INFO
