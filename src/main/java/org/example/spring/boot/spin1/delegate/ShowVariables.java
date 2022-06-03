@@ -3,9 +3,11 @@ package org.example.spring.boot.spin1.delegate;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.camunda.bpm.engine.HistoryService;
 import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.camunda.bpm.engine.history.HistoricVariableInstance;
 import org.camunda.bpm.engine.variable.value.ObjectValue;
 import org.camunda.spin.json.SpinJsonNode;
 import org.example.spring.boot.spin1.model.Customer;
@@ -20,9 +22,11 @@ import java.util.Map;
 @Slf4j
 public class ShowVariables implements JavaDelegate {
     private RepositoryService repositoryService;
+    private HistoryService historyService;
 
-    public ShowVariables(RepositoryService repositoryService) {
+    public ShowVariables(RepositoryService repositoryService, HistoryService historyService) {
         this.repositoryService = repositoryService;
+        this.historyService = historyService;
     }
 
     @Override
@@ -58,6 +62,28 @@ public class ShowVariables implements JavaDelegate {
                 }
             }
         }
+
+
+        HistoricVariableInstance historicVariableInstance = historyService.createHistoricVariableInstanceQuery().variableName("accountCustomersGsonToJson").list().get(0);
+        String getName = historicVariableInstance.getTypedValue().getType().getName();
+        String getTypeName = historicVariableInstance.getTypeName();
+
+        if (log.isDebugEnabled()) log.debug("-----> execute: accountCustomersGsonToJson - getName = {}", getName);
+        if (log.isDebugEnabled()) log.debug("-----> execute: accountCustomersGsonToJson - getTypeName = {}", getTypeName);
+
+        historicVariableInstance = historyService.createHistoricVariableInstanceQuery().variableName("accountCustomersJson").list().get(0);
+        getName = historicVariableInstance.getTypedValue().getType().getName();
+        getTypeName = historicVariableInstance.getTypeName();
+
+        if (log.isDebugEnabled()) log.debug("-----> execute: accountCustomersJson - getName = {}", getName);
+        if (log.isDebugEnabled()) log.debug("-----> execute: accountCustomersJson - getTypeName = {}", getTypeName);
+
+         historicVariableInstance = historyService.createHistoricVariableInstanceQuery().variableName("customersOfAccount1").list().get(0);
+         getName = historicVariableInstance.getTypedValue().getType().getName();
+         getTypeName = historicVariableInstance.getTypeName();
+
+        if (log.isDebugEnabled()) log.debug("-----> execute: customersOfAccount1 - getName = {}", getName);
+        if (log.isDebugEnabled()) log.debug("-----> execute: customersOfAccount1 - getTypeName = {}", getTypeName);
 
         if (log.isDebugEnabled()) log.debug("-----> execute: Exit {} - {}", processKey, delegateExecution.getCurrentActivityId());
     }

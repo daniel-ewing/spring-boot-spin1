@@ -27,9 +27,9 @@ public class ProcessApplication {
 		String processKey2 = "spin-asynchronous";
 
 		for (int pi = 1; pi <= 1; pi++) {
-			ProcessInstance processInstance1 = runtimeService.startProcessInstanceByKey(processKey1, processKey1 + " BK " + pi);
+//			ProcessInstance processInstance1 = runtimeService.startProcessInstanceByKey(processKey1, processKey1 + " BK " + pi);
 			ProcessInstance processInstance2 = runtimeService.startProcessInstanceByKey(processKey2, processKey2 + " BK " + pi);
-			if (log.isDebugEnabled()) log.debug("-----> processPostDeploy: created {} process instance with ID: {}", processKey1, processInstance1.getId());
+//			if (log.isDebugEnabled()) log.debug("-----> processPostDeploy: created {} process instance with ID: {}", processKey1, processInstance1.getId());
 			if (log.isDebugEnabled()) log.debug("-----> processPostDeploy: created {} process instance with ID: {}", processKey2, processInstance2.getId());
 
 			if ((pi % 1000) == 0) {

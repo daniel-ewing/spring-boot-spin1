@@ -38,7 +38,7 @@ public class SetVariables implements JavaDelegate {
         delegateExecution.setVariable("taskNumbers", spinList);
 
         Map<String, List<Customer>> accountCustomers = new HashMap<>();
-        List<Customer> customersOfAccount1 = new ArrayList<>();
+        List<org.example.spring.boot.spin1.model.Customer> customersOfAccount1 = new ArrayList<org.example.spring.boot.spin1.model.Customer>();
         customersOfAccount1.add(new Customer("Account1", "First1", "Last1"));
         customersOfAccount1.add(new Customer("Account1", "First2", "Last2"));
         List<Customer> customersOfAccount2 = new ArrayList<>();
@@ -53,8 +53,15 @@ public class SetVariables implements JavaDelegate {
         ObjectValue typedObjectVariableJson = Variables.objectValue(accountCustomers).serializationDataFormat(Variables.SerializationDataFormats.JSON).create();
         delegateExecution.setVariable("accountCustomersJson", typedObjectVariableJson);
 
+        typedObjectVariableJson = Variables.objectValue(customersOfAccount1).serializationDataFormat(Variables.SerializationDataFormats.JSON).create();
+        setVariable(delegateExecution, "customersOfAccount1", typedObjectVariableJson);
+
         delegateExecution.setVariable("accountCustomersGsonToJson", new Gson().toJson(accountCustomers));
 
         if (log.isDebugEnabled()) log.debug("-----> execute: Exit {} - {}", processKey, delegateExecution.getCurrentActivityId());
+    }
+
+    private void setVariable(DelegateExecution delegateExecution, String name, Object value) {
+        delegateExecution.setVariable(name, value);
     }
 }

@@ -55,8 +55,8 @@
 <!--    <camunda.starter.version>7.16.2-ee</camunda.starter.version>-->
 <!--    <spring.version>2.5.5</spring.version>-->
 
-    <camunda.version>7.17.1-ee</camunda.version>
-    <camunda.starter.version>7.17.1-ee</camunda.starter.version>
+    <camunda.version>7.17.0-ee</camunda.version>
+    <camunda.starter.version>7.17.0-ee</camunda.starter.version>
     <spring.version>2.6.7</spring.version>
 
     <spin.version>1.9.0</spin.version>
@@ -150,10 +150,10 @@
       <version>${jaxb.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>com.h2database</groupId>-->
+<!--      <artifactId>h2</artifactId>-->
+<!--    </dependency>-->
 
 <!--    <dependency>-->
 <!--      <groupId>com.microsoft.sqlserver</groupId>-->
@@ -167,11 +167,11 @@
 <!--      <version>${ojdbc11.version}</version>-->
 <!--    </dependency>-->
 
-<!--    <dependency>-->
-<!--      <groupId>org.postgresql</groupId>-->
-<!--      <artifactId>postgresql</artifactId>-->
-<!--      <version>${postgresql.version}</version>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>${postgresql.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.projectlombok</groupId>
