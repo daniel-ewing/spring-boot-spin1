@@ -9,6 +9,7 @@ camunda:
     authorization:
       enabled: true
     #    enableExceptionsAfterUnhandledBpmnError: true
+    default-serialization-format: application/json
     filter:
       create: All tasks
     generic-properties:

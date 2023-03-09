@@ -1,25 +1,19 @@
 package org.example.spring.boot.spin1.delegate;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.camunda.bpm.engine.variable.value.ObjectValue;
-import org.camunda.spin.json.SpinJsonNode;
-import org.example.spring.boot.spin1.model.Customer;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 @Component("ShowVariables")
 @Slf4j
 public class ShowVariables implements JavaDelegate {
-     private RepositoryService repositoryService;
+    private final static String originalCustomerClassName = "org.example.spring.boot.spin1.model.original.Customer";
+    private final static String updatedCustomerClassName = "org.example.spring.boot.spin1.model.updated.Customer";
+     private final RepositoryService repositoryService;
 
     public ShowVariables(RepositoryService repositoryService) {
         this.repositoryService = repositoryService;
@@ -31,46 +25,38 @@ public class ShowVariables implements JavaDelegate {
 
         if (log.isDebugEnabled()) log.debug("-----> execute: Enter {} - {}", processKey, delegateExecution.getCurrentActivityId());
 
-        SpinJsonNode taskNumbers = (SpinJsonNode) delegateExecution.getVariable("taskNumbers");
-        if (log.isDebugEnabled()) log.debug("-----> {}: taskNumbers = {}", processKey, taskNumbers.toString());
-
-        ObjectValue accountCustomersObject = delegateExecution.getVariableTyped("accountCustomersJava");
-        processAccountCustomersObject(accountCustomersObject, processKey, "Java");
-
-        accountCustomersObject = delegateExecution.getVariableTyped("accountCustomersJson");
-        processAccountCustomersObject(accountCustomersObject, processKey, "Json");
-
-        try {
-            accountCustomersObject = delegateExecution.getVariableTyped("accountCustomersGsonToJson");
-            processAccountCustomersObject(accountCustomersObject, processKey, "GsonToJson");
-        }
-        catch (ClassCastException e) {
-            if (e.getMessage().contains("PrimitiveTypeValueImpl$StringValueImpl cannot be cast to class")) {
-                String accountCustomersString = delegateExecution.getVariable("accountCustomersGsonToJson").toString();
-                TypeReference<HashMap<String, List<Customer>>> typeReference = new TypeReference<HashMap<String, List<Customer>>>() {};
-                Map<String, List<Customer>> accountCustomers = new ObjectMapper().readValue(accountCustomersString, typeReference);
-                for (Map.Entry<String, List<Customer>> arrayEntry : accountCustomers.entrySet()) {
-                    for (Customer customer : arrayEntry.getValue()) {
-                        if (log.isDebugEnabled()) log.debug("-----> {}: Deserialized {}: Account Name = {} - Customer Name = {} {}",
-                                processKey, "GsonToJson String", customer.getAccount(), customer.getFirstName(), customer.getLastName());
-                        // Do something with Customer.
-                    }
-                }
-            }
-        }
+        List customers1 = (List) delegateExecution.getVariable("customers1");
+        processCustomers(customers1, processKey);
+        List customers2 = (List) delegateExecution.getVariable("customers2");
+        processCustomers(customers2, processKey);
 
         if (log.isDebugEnabled()) log.debug("-----> execute: Exit {} - {}", processKey, delegateExecution.getCurrentActivityId());
     }
+    private void processCustomers(List customers, String processKey) {
+        if (customers.isEmpty()) return;
+        Object testCustomer = customers.get(0);
+        if (testCustomer != null) {
+            if (originalCustomerClassName.equals(testCustomer.getClass().getCanonicalName())) {
+                List<org.example.spring.boot.spin1.model.original.Customer> originalCustomers = customers;
+                for (org.example.spring.boot.spin1.model.original.Customer customer : originalCustomers) {
+                    // Do something with org.example.spring.boot.spin1.model.original.Customer.
 
-    private void processAccountCustomersObject(ObjectValue accountCustomersObject, String processKey, String type) {
-        Map<String, List<Customer>> accountCustomers = (HashMap<String, List<Customer>>) accountCustomersObject.getValue();
-        Iterator<Map.Entry<String, List<Customer>>> mapIterator = accountCustomers.entrySet().iterator();
-        for (Map.Entry<String, List<Customer>> arrayEntry : accountCustomers.entrySet()) {
-            for (Customer customer : arrayEntry.getValue()) {
-                if (log.isDebugEnabled()) log.debug("-----> {}: Deserialized {}: Account Name = {} - Customer Name = {} {}",
-                        processKey, type, customer.getAccount(), customer.getFirstName(), customer.getLastName());
-                // Do something with Customer.
+                    if (log.isDebugEnabled()) log.debug("-----> {}: Account Name = {} - Customer Name = {} {}",
+                            processKey, customer.getAccount(), customer.getFirstName(), customer.getLastName());
+                }
+            } else if (updatedCustomerClassName.equals(testCustomer.getClass().getCanonicalName())) {
+                List<org.example.spring.boot.spin1.model.updated.Customer> originalCustomers = customers;
+                for (org.example.spring.boot.spin1.model.updated.Customer customer : originalCustomers) {
+                    // Do something with org.example.spring.boot.spin1.model.updated.Customer.
+
+                    if (log.isDebugEnabled()) log.debug("-----> {}: Account Name = {} - Customer Name = {} {}",
+                            processKey, customer.getAccount(), customer.getFirstName(), customer.getLastName());
+                }
+            } else {
+                if (log.isDebugEnabled()) log.debug("-----> {}: Unknown Canonical type = {}",
+                        processKey, testCustomer.getClass().getCanonicalName());
             }
         }
     }
+
 }

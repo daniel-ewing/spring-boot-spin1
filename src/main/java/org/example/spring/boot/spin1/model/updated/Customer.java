@@ -1,4 +1,4 @@
-package org.example.spring.boot.spin1.model;
+package org.example.spring.boot.spin1.model.updated;
 
 import java.io.Serializable;
 
